@@ -159,6 +159,11 @@ function PolUI:MakeWindow(set)
 		menu.PivotPoint = v2z 
 		menu.Color = theme.Background 
 		menu.Visible = false 
+		function Tab:Destroy() 
+			menu:Destroy()
+			open:Destroy()
+			self = {} 
+		end
  
 		if not self.currenttab then 
 			self.currenttab = { menu, open } 
@@ -219,6 +224,10 @@ function PolUI:MakeWindow(set)
 			container.PositionRelative = v2z 
 			container.PivotPoint = v2z 
 			container.Color = cinvis 
+			function TabBox:Destroy()
+				container:Destroy()
+				self = {}
+			end
  
 			local bar = Instance.New("UIView", container) 
 			bar.SizeOffset = Vector2.New(0, headerHeight) 
@@ -320,9 +329,15 @@ function PolUI:MakeWindow(set)
 				lbl.Text = Label.settings.Content 
 				lbl.FontAsset = fontass 
 				lbl.FontSize = 12
- 
+ 	
 				SIIZE = SIIZE + buttonHeight 
 				update() 
+				function Label:Destroy()
+					lbl:Destroy()
+					self = {}
+					SIIZE = SIIZE - buttonHeight 
+					update() 
+				end
  
 				return Label 
 			end 
@@ -393,15 +408,21 @@ function PolUI:MakeWindow(set)
  
 				SIIZE = SIIZE + buttonHeight 
 				update() 
+				function Button:Destroy()
+					fra:Destroy()
+					self = {}
+					SIIZE = SIIZE - buttonHeight 
+					update() 
+				end
  
 				return Button 
 			end 
 			
 			function TabBox:MakeInput(set) 
-				local Label = { 
+				local Input = { 
 					self = self, 
 					settings = { 
-						Title = (set and set.Title) or "None", 
+						Title = (set and set.Title) or "", 
 						Placeholder = (set and set.Placeholder) or "",
 						StartValue = (set and set.StartValue) or "",
 						Callback = (set and set.Callback) or function(Value) 
@@ -415,7 +436,7 @@ function PolUI:MakeWindow(set)
 			    local cleaned = str:gsub("[^0-9.]", "")
 			    return tonumber(cleaned)
 			end
-				local value = Label.StartValue
+				local value = Input.StartValue
  
 				local fra = Instance.New("UIView", back) 
 				fra.SizeOffset = Vector2.New(0, otherHeight) 
@@ -437,8 +458,8 @@ function PolUI:MakeWindow(set)
 				lbl.Color = theme.Light 
 				lbl.PlaceholderColor = theme.PlaceholderText
 				lbl.BorderColor = theme.ObjectBorder
-				lbl.Text = Label.settings.NumbersOnly and cleanNumber(Label.settings.StartValue) or Label.settings.StartValue
-				lbl.Placeholder = Label.settings.Placeholder
+				lbl.Text = Input.settings.NumbersOnly and cleanNumber(Input.settings.StartValue) or Input.settings.StartValue
+				lbl.Placeholder = Input.settings.Placeholder
 				lbl.FontAsset = fontass
 				local title = Instance.New("UILabel", fra)
 				title.SizeOffset = v2z
@@ -448,19 +469,19 @@ function PolUI:MakeWindow(set)
 				title.PivotPoint = Vector2.New(0.5,0)
 				title.TextColor = theme.Text 
 				title.Color = cinvis
-				title.Text = Label.settings.Title
+				title.Text = Input.settings.Title
 				title.FontAsset = fontass
 				title.FontSize = 10
 				title.HorizontalAlignment = Enums.HorizontalAlignment.Left
 				title.VerticalAlignment = Enums.VerticalAlignment.Top
  				lbl.FocusEnter:Connect(function()
-					if Label.settings.ClearOnFocus then
+					if Input.settings.ClearOnFocus then
 						lbl.Text = ""
 					end
 				end)
 				--[[cant use
 				lbl.Changed:Connect(function()
-					if Label.settings.NumbersOnly then
+					if Input.settings.NumbersOnly then
 						local pos = lbl.cursorpos
 						lbl.Text = lbl.Text:gsub("[^0-9.]", "")
 						value = lbl.Text
@@ -471,16 +492,22 @@ function PolUI:MakeWindow(set)
 				lbl.Submitted:Connect(function()
 					lbl.Text = lbl.Text:gsub("[^0-9.]", "")
 					value = lbl.Text
-					local success, err = pcall(Label.settings.Callback, value) 
+					local success, err = pcall(Input.settings.Callback, value) 
 	 
 					if not success then
 					 	warn("CALLBACK ERROR: ".. tostring(err))
 					end
 				end)
 				SIIZE = SIIZE + otherHeight 
-				update() 
+				update()
+				function Input:Destroy()
+					fra:Destroy()
+					self = {}
+					SIIZE = SIIZE - otherHeight 
+					update() 
+				end 
  
-				return Label 
+				return Input 
 			end
 				
 			function TabBox:MakeToggle(set) 
@@ -574,8 +601,14 @@ function PolUI:MakeWindow(set)
  
 				SIIZE = SIIZE + otherHeight 
 				update() 
+				function Toggle:Destroy()
+					fra:Destroy()
+					self = {}
+					SIIZE = SIIZE - otherHeight 
+					update() 
+				end
  
-				return Button 
+				return Toggle 
 			end
  
 			update() 
