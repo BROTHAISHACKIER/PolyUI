@@ -75,7 +75,7 @@ local Tab = Window:MakeTab({
 
 | Method | Description |
 | --- | --- |
-| `Window:Destroy()` | Destroys the Tab. |
+| `Tab:Destroy()` | Destroys the Tab. |
 ---
 ### TabBox
 ```lua
@@ -95,7 +95,7 @@ local TabBox = Tab:MakeRightTabbox({
 
 | Method | Description |
 | --- | --- |
-| `Window:Destroy()` | Destroys the TabBox. |
+| `TabBox:Destroy()` | Destroys the TabBox. |
 ---
 ### Label
 ```lua
